@@ -1,14 +1,20 @@
-name: Test Run Invoice Script
-on:
-  workflow_dispatch:
-
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      # map repo secrets into env vars
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      MASTER_SHEET_ID: ${{ secrets.MASTER_SHEET_ID }}
+      EFFORT_SHEET_ID: ${{ secrets.EFFORT_SHEET_ID }}
+      SME_SHEET_ID: ${{ secrets.SME_SHEET_ID }}
+      PROGRAM_SHEET_ID: ${{ secrets.PROGRAM_SHEET_ID }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-      - run: pip install -r requirements.txt
-      - run: python src/run_create_invoices.py
+          python-version: '3.10'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Run invoice script
+        run: python src/run_create_invoices.py
